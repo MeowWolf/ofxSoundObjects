@@ -51,7 +51,7 @@ bool ofxSoundPlayerObject::load(std::filesystem::path filePath, bool _stream){
 		soundFile.readTo(buffer);
 		ofLogVerbose() << "Not streaming; Reading whole file into memory! ";
 	}
-	volume.setName(ofFilePath::getBaseName(filePath));
+	volume.setName(ofFilePath::getBaseName(filePath.string()));
     playerNumChannels = soundFile.getNumChannels();
     playerSampleRate = soundFile.getSampleRate();
 	return true;
@@ -84,19 +84,24 @@ int ofxSoundPlayerObject::play() {
 			for (auto& i : instances) {
 				if (!i.bIsPlaying) {
 					index = i.id;
+                    setPosition(0.0f, index);
 					setSpeed(1, index);
 					bFound = true;
 					break;
 				}
 			}
-			if(!bFound && maxSounds > instances.size()){
-				instances.push_back(soundPlayInstance());
-				index =instances.size() - 1;
-				instances.back().id = index;
-				setSpeed(1, index);
-			} else {
-				bCanPlay = false;
-			}
+            
+            if (!bFound)
+            {
+                if (maxSounds > instances.size()){
+                    instances.push_back(soundPlayInstance());
+                    index =instances.size() - 1;
+                    instances.back().id = index;
+                    setSpeed(1, index);
+                } else {
+                    bCanPlay = false;
+                }
+            }
 		} else {
             if (instances.size() == 0) {
                 instances.resize(1);
