@@ -192,7 +192,7 @@ void ofxSoundPlayerObject::audioOut(ofSoundBuffer& outputBuffer){
 			if (buffer.size()) {
                 auto processBuffers = [&](ofSoundBuffer& buf, soundPlayInstance& i){
 						//assert( resampledBuffer.getNumFrames() == bufferSize*relativeSpeed[i] );
-						if (abs(i.speed - 1) < FLT_EPSILON) {
+						if (fabsf(i.speed - 1.0f) < FLT_EPSILON) {
 							buffer.copyTo(buf, nFrames, nChannels, i.position, i.loop);
 						}
 						else {
@@ -237,7 +237,7 @@ void ofxSoundPlayerObject::setPan(float _pan, int index){
 }
 //--------------------------------------------------------------
 void ofxSoundPlayerObject::setSpeed(float spd, int index){
-	if ( bStreaming && fabsf(spd-1.0f)<FLT_EPSILON ){
+	if (bStreaming && !(fabsf(spd-1.0f)<FLT_EPSILON)){
 		ofLogWarning("ofxSoundPlayerObject") << "setting speed is not supported on bStreaming sounds";
 		return;
 	}
